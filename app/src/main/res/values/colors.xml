@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_magenta">#A30262</color>
+    <color name="brand_orange">#Ef7627</color>
+    <color name="brand_pink">#D162A4</color>
+    <color name="brand_green">#4CAF50</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="dark_gray">#121212</color>
+    <color name="muted_black">#151515</color>
+    <color name="muted_white">#F5F5F5</color>
+</resources>

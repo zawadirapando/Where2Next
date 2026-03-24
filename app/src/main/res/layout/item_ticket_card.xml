@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:elevation="8dp"
+    android:background="@drawable/background_ticket_punch"
+    android:backgroundTint="?attr/colorSecondary"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textCardEventTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Kenya Museum Pop up market and book sale"
+        android:textAlignment="center"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageCardQrCode"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="24dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textCardEventTitle"
+        tools:srcCompat="@drawable/ic_launcher_background" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutPassenger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageCardQrCode">
+
+        <TextView
+            android:id="@+id/textCardBuyerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Zawadi Rapando"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" • "
+            android:textColor="#757575"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textCardTicketCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ticket 1 of 2"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textCardTicketType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:text="General Admission"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineTear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutPassenger" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.69" />
+
+    <View
+    android:id="@+id/viewDottedLine"
+    android:layout_width="0dp"
+    android:layout_height="10dp"
+    android:background="@drawable/dotted_line"
+    android:layerType="software"
+    app:layout_constraintBottom_toBottomOf="@+id/guidelineTear"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/guidelineTear" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineLeftInner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="4dp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guidelineLeftInner"
+        app:layout_constraintTop_toBottomOf="@+id/viewDottedLine">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date and time"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textCardDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading date..."
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textCardLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading location..."
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Organized by"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textCardHost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading host..."
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

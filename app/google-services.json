@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "633981540420",
+    "project_id": "where2next-2bd2e",
+    "storage_bucket": "where2next-2bd2e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633981540420:android:d77b74956f776afb01c411",
+        "android_client_info": {
+          "package_name": "com.example.where2next"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9M0st36tbav4Sdrv8DOY6kTSAi5A0lRw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

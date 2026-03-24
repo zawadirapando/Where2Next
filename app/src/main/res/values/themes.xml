@@ -1,0 +1,23 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Where2Next" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="colorPrimary">@color/brand_magenta</item>
+        <item name="colorSecondary">@color/brand_orange</item>
+        <item name="colorPrimaryVariant">@color/brand_pink</item>
+
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnBackground">@color/black</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorOnSurfaceVariant">@color/dark_gray</item>
+        <item name="colorAccent">@color/muted_white</item>
+
+    </style>
+
+    <style name="Theme.Where2Next" parent="Base.Theme.Where2Next" />
+</resources>
