@@ -16,6 +16,11 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.where2next.R
 import com.example.where2next.models.Event
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.card.MaterialCardView
 import org.w3c.dom.Text
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -23,6 +28,8 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class EventDetailsFragment : Fragment() {
+
+    private var mapView: MapView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +42,10 @@ class EventDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val event = arguments?.getParcelable<Event>("SELECTED_EVENT")
+
+        //initialize map
+        mapView = view.findViewById(R.id.mapViewLite)
+        mapView?.onCreate(savedInstanceState)
 
         if (event != null){
             val coverImage = view.findViewById<ImageView>(R.id.imageEventCover)
@@ -92,12 +103,24 @@ class EventDetailsFragment : Fragment() {
             //Google maps
             locationText.text = event.locationName
 
-            locationText.setOnClickListener{
+            mapView?.getMapAsync{ googleMap ->
+                val lat = event.locationCoordinates?.latitude?: 0.0
+                val lng = event.locationCoordinates?.longitude?: 0.0
+                val eventLocation = LatLng(lat, lng)
+
+                googleMap.addMarker(MarkerOptions().position(eventLocation))
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, 15f))
+            }
+
+            val mapClickListener = View.OnClickListener{
                 val encodedLocation = URLEncoder.encode(event.locationName, "UTF-8")
                 val uri = Uri.parse("geo:0,0?q=$encodedLocation")
                 val mapIntent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(mapIntent)
             }
+
+
+            view.findViewById<View>(R.id.mapOverlayClickArea).setOnClickListener(mapClickListener)
 
             //Price bar
             priceText.text = "Ksh ${event.ticketPrice.toInt()}"
@@ -189,13 +212,26 @@ class EventDetailsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        mapView?.onResume()
         val bottomNav = requireActivity().findViewById<View>(R.id.bottomNavigationView)
         bottomNav?.visibility = View.GONE
     }
 
+    override fun onPause() {
+        super.onPause()
+        mapView?.onPause()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        mapView?.onDestroy()
+        mapView = null
         val bottomNav = requireActivity().findViewById<View>(R.id.bottomNavigationView)
         bottomNav?.visibility = View.VISIBLE
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView?.onLowMemory()
     }
 }

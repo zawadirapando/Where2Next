@@ -178,49 +178,56 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textDetailsDescription" />
 
+            <TextView
+                android:id="@+id/textMapPin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:textSize="16sp"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                tools:text="The Alchemist"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textReadMore"/>
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardLocationMap"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="150dp"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="10dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:layout_constraintTop_toBottomOf="@+id/textReadMore">
-
-                <View
+                app:layout_constraintTop_toBottomOf="@+id/textMapPin">
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#2C2C2C" />
+                    android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/button_background"
-                    android:backgroundTint="?attr/colorPrimary"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    <com.google.android.gms.maps.MapView
+                        android:id="@+id/mapViewLite"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:liteMode="true"
+                        app:mapType="normal" />
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_home"
-                        app:tint="@android:color/white" />
+                    <View
+                        android:id="@+id/mapOverlayClickArea"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#40000000"
+                        android:clickable="true"
+                        android:focusable="true"/>
 
-                    <TextView
-                        android:id="@+id/textMapPin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        tools:text="The Alchemist" />
-                </LinearLayout>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </com.google.android.material.card.MaterialCardView>
-            
+
+
+
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupTags"
                 android:layout_width="match_parent"
@@ -228,7 +235,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="24dp"
                 app:layout_constraintTop_toBottomOf="@id/cardLocationMap">
-                
+
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

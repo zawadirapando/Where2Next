@@ -35,7 +35,7 @@ class TicketReceiptFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val event = arguments?.getParcelable<Event>("SELECTED_EVENT")
-        val ticket = arguments?.getParcelable<Ticket>("PURCHASED_TICKET")
+        val ticket = arguments?.getParcelable<Ticket>("PURCHASEDx`_TICKET")
 
         viewPagerTickets = view.findViewById(R.id.viewPagerTickets)
         tabLayoutDots = view.findViewById(R.id.tabLayoutTicketDots)
@@ -56,7 +56,7 @@ class TicketReceiptFragment : Fragment() {
         db.collection("users").document(ticket.userId).get()
             .addOnSuccessListener { document ->
                 val firstName = document.getString("firstName") ?: ""
-                val lastName = document.getString("la   stName") ?: ""
+                val lastName = document.getString("lastName") ?: ""
 
                 val combinedName = "$firstName $lastName".trim()
                 

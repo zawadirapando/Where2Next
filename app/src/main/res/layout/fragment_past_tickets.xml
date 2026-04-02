@@ -7,7 +7,7 @@
     android:background="?attr/colorSurface">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewUpcomingTickets"
+        android:id="@+id/recyclerViewPastTickets"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -18,10 +18,10 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/textNoUpcomingTickets"
+        android:id="@+id/textNoPastTickets"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No upcoming events."
+        android:text="No Past events."
         android:textSize="16sp"
         android:textColor="?attr/colorOnSurface"
         android:visibility="gone"

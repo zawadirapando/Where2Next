@@ -1,6 +1,7 @@
 package com.example.where2next
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.where2next.databinding.ActivityNavigationBinding
@@ -18,6 +19,32 @@ class NavigationActivity : AppCompatActivity() {
 
         binding = ActivityNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //keyboard fix
+        val rootView = binding.root
+
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = android.graphics.Rect()
+            rootView.getWindowVisibleDisplayFrame(r)
+            val screenHeight = rootView.rootView.height
+
+            val keyboardHeight = screenHeight - r.bottom
+
+            if(keyboardHeight > screenHeight*0.15) {
+                binding.bottomNavigationView.visibility = View.GONE
+            } else {
+                val currentFrag = supportFragmentManager.findFragmentById(R.id.frameLayout)
+
+                if(currentFrag is HomeFragment ||
+                    currentFrag is CreateFragment ||
+                    currentFrag is TicketsFragment ||
+                    currentFrag is ProfileFragment ){
+
+                    binding.bottomNavigationView.visibility = View.VISIBLE
+                }
+
+            }
+        }
 
         if (savedInstanceState == null) {
             replaceFragment(HomeFragment())
