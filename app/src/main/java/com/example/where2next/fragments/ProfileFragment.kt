@@ -90,6 +90,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 .commit()
         }
 
+        view.findViewById<View>(R.id.buttonTheme).setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frameLayout,  ThemeFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         view.findViewById<View>(R.id.buttonPayoutMethods).setOnClickListener {
             Toast.makeText(context, "Opening Payout Methods...", Toast.LENGTH_SHORT).show()
         }
