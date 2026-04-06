@@ -84,7 +84,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         view.findViewById<View>(R.id.buttonMyInterests).setOnClickListener {
-            Toast.makeText(context, "Opening Interests...", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frameLayout,  InterestsFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         view.findViewById<View>(R.id.buttonPayoutMethods).setOnClickListener {

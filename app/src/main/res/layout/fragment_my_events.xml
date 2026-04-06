@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/toolbarMyEvents"
         android:layout_width="match_parent"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="38dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Edit Details"
+            android:text="My Events"
             android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
             android:textStyle="bold" />
