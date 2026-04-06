@@ -92,27 +92,27 @@ class UpcomingTicketsFragment : Fragment(R.layout.fragment_upcoming_tickets) {
                                 if (event != null) {
                                     val currentDate = Date() // Gets exactly right now
 
-                                    // THE BOUNCER: Only let it in if the event is in the FUTURE
+
                                     if (event.dateAndTime != null && event.dateAndTime!!.after(currentDate)) {
                                         temporaryList.add(Pair(ticket, event))
                                     }
                                 }
 
-                                // 3. Every time a download finishes, tick the counter
+
                                 processedCount++
 
-                                // 4. Only update the UI when ALL downloads are 100% finished
+
                                 if (processedCount == totalTicketsToProcess) {
 
-                                    // Move everything from the temporary list into the real list
+
                                     ticketList.addAll(temporaryList)
 
-                                    // Poke the Adapter exactly ONE time
+
                                     walletAdapter.notifyDataSetChanged()
                                 }
                             }
                             .addOnFailureListener {
-                                processedCount++ // Still tick the counter so we don't get stuck forever
+                                processedCount++
                                 Log.e("Wallet", "Failed to find matching event")
                             }
                     } else {

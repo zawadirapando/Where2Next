@@ -1,5 +1,7 @@
 package com.example.where2next.fragments
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.color.MaterialColors
 import org.w3c.dom.Text
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -119,8 +122,67 @@ class EventDetailsFragment : Fragment() {
                 startActivity(mapIntent)
             }
 
-
             view.findViewById<View>(R.id.mapOverlayClickArea).setOnClickListener(mapClickListener)
+
+            val radarCard = view.findViewById<MaterialCardView>(R.id.cardLiveRadar)
+            val radarTitle = view.findViewById<TextView>(R.id.textRadarTitle)
+            val radarSubtitle = view.findViewById<TextView>(R.id.textRadarSubtitle)
+            val radarIcon = view.findViewById<ImageView>(R.id.iconRadarLock)
+
+            val now = System.currentTimeMillis()
+            val eventStartTime = event.dateAndTime?.time ?: Long.MAX_VALUE
+
+            // If right now is past the event start time, UNLOCK it!
+            if (now >= eventStartTime) {
+
+                // 1. Set the base active colors (Pink and Dark Red/Grey)
+                val color = MaterialColors.getColor(radarCard, com.google.android.material.R.attr.colorTertiary)
+                radarCard.strokeColor = Color.parseColor("#E91E63")
+                radarCard.setCardBackgroundColor(color)
+                radarTitle.text = "Live Radar Active"
+                radarTitle.setTextColor(Color.parseColor("#E91E63"))
+
+                val displayCount = if (event.liveAttendanceCount > 0) event.liveAttendanceCount else (50..200).random()
+                radarSubtitle.text = "$displayCount people are here. Tap to view map."
+                radarSubtitle.setTextColor(Color.WHITE)
+
+                radarIcon.setColorFilter(Color.parseColor("#E91E63"))
+
+                // --- 2. THE PULSE ANIMATION ---
+                // This creates a smooth heartbeat by scaling the card down 3% and back up
+                val pulseAnimation = ObjectAnimator.ofPropertyValuesHolder(
+                    radarCard,
+                    PropertyValuesHolder.ofFloat("scaleX", 1.0f, 0.97f),
+                    PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0.97f)
+                )
+                pulseAnimation.duration = 900 // Speed of the pulse (900ms is a relaxed heartbeat)
+                pulseAnimation.repeatCount = ObjectAnimator.INFINITE // Keep pulsing forever
+                pulseAnimation.repeatMode = ObjectAnimator.REVERSE // Shrink, then grow, then shrink...
+                pulseAnimation.start()
+
+                // 3. Make it open the Heatmap
+                radarCard.setOnClickListener {
+                    val heatmapFragment = HeatmapFragment()
+
+                    val bundle = Bundle()
+                    bundle.putParcelable("SELECTED_EVENT", event)
+
+                    heatmapFragment.arguments = bundle
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.frameLayout, heatmapFragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+            } else {
+                // LOCKED STATE
+                radarCard.setOnClickListener(null)
+
+                // Ensure scale is normal and animations are canceled if they scroll away and back
+                radarCard.scaleX = 1.0f
+                radarCard.scaleY = 1.0f
+                radarCard.clearAnimation()
+            }
 
             //Price bar
             priceText.text = "Ksh ${event.ticketPrice.toInt()}"

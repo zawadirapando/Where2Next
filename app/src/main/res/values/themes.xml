@@ -16,6 +16,7 @@
         <item name="colorOnSurface">@color/black</item>
         <item name="colorOnSurfaceVariant">@color/dark_gray</item>
         <item name="colorAccent">@color/muted_white</item>
+        <item name="colorTertiary">@color/light_radar_pink</item>
 
     </style>
 
