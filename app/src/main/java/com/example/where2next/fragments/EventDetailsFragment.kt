@@ -2,6 +2,7 @@ package com.example.where2next.fragments
 
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -185,76 +186,104 @@ class EventDetailsFragment : Fragment() {
             }
 
             //Price bar
-            priceText.text = "Ksh ${event.ticketPrice.toInt()}"
+            val currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
 
-            if (event.ticketsAvailable <= 0){
-                statusText.text = "Sold out"
-                statusText.setTextColor(Color.RED)
+            val layoutAttendeeBar = view.findViewById<View>(R.id.layoutAttendeeBar)
+            val layoutHostBar = view.findViewById<View>(R.id.layoutHostBar)
 
-                buyButton.text = "Unavailable"
-                buyButton.isEnabled = false
-                buyButton.setBackgroundColor(Color.DKGRAY)
+            if (currentUserId == event.creatorId) {
+                // If host
+                layoutAttendeeBar.visibility = View.GONE
+                layoutHostBar.visibility = View.VISIBLE
 
-            }else{
-                val salesEndMillis = event.salesEndDateTime?.time ?: 0L
-                val nowMillis = System.currentTimeMillis()
-                val timeDifference = salesEndMillis - nowMillis
+                view.findViewById<Button>(R.id.buttonEditEvent).setOnClickListener {
+                    // TODO: Open CreateFragment and pass the Event object
+                    android.widget.Toast.makeText(context, "Editing Event...", android.widget.Toast.LENGTH_SHORT).show()
+                }
 
-                val twelveHoursInMillis = 12*60*60*1000L
+                view.findViewById<Button>(R.id.buttonScanTickets).setOnClickListener {
+                    // TODO: Open Scanner
+                    android.widget.Toast.makeText(context, "Opening Scanner...", android.widget.Toast.LENGTH_SHORT).show()
+                }
 
-                if (salesEndMillis > 0 && timeDifference <=0){
-                    statusText.text = "Sales closed"
+            } else {
+                // If attendee
+                layoutAttendeeBar.visibility = View.VISIBLE
+                layoutHostBar.visibility = View.GONE
+
+                priceText.text = "Ksh ${event.ticketPrice.toInt()}"
+
+                if (event.ticketsAvailable <= 0){
+                    statusText.text = "Sold out"
                     statusText.setTextColor(Color.RED)
 
-                    buyButton.text = "Gate only"
+                    buyButton.text = "Unavailable"
                     buyButton.isEnabled = false
                     buyButton.setBackgroundColor(Color.DKGRAY)
 
-                }else if (salesEndMillis > 0 && timeDifference <= twelveHoursInMillis){
-                    buyButton.text = "Get tickets"
-                    buyButton.isEnabled = true
+                }else {
+                    val salesEndMillis = event.salesEndDateTime?.time ?: 0L
+                    val nowMillis = System.currentTimeMillis()
+                    val timeDifference = salesEndMillis - nowMillis
 
-                    buyButton.setOnClickListener{
-                        val checkoutFragment = CheckoutFragment()
+                    val twelveHoursInMillis = 12 * 60 * 60 * 1000L
 
-                        val bundle = Bundle()
-                        bundle.putParcelable("SELECTED_EVENT", event)
+                    if (salesEndMillis > 0 && timeDifference <= 0) {
+                        statusText.text = "Sales closed"
+                        statusText.setTextColor(Color.RED)
 
-                        checkoutFragment.arguments = bundle
+                        buyButton.text = "Gate only"
+                        buyButton.isEnabled = false
+                        buyButton.setBackgroundColor(Color.DKGRAY)
 
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.frameLayout, checkoutFragment)
-                            .addToBackStack(null)
-                            .commit()
+                    } else if (salesEndMillis > 0 && timeDifference <= twelveHoursInMillis) {
+                        buyButton.text = "Get tickets"
+                        buyButton.isEnabled = true
+
+                        buyButton.setOnClickListener {
+                            val checkoutFragment = CheckoutFragment()
+
+                            val bundle = Bundle()
+                            bundle.putParcelable("SELECTED_EVENT", event)
+
+                            checkoutFragment.arguments = bundle
+
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.frameLayout, checkoutFragment)
+                                .addToBackStack(null)
+                                .commit()
+                        }
+
+                        object : CountDownTimer(timeDifference, 1000) {
+                            @SuppressLint("DefaultLocale")
+                            override fun onTick(millisUntilFinished: Long) {
+                                val hours = TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
+                                val minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) % 60
+                                val seconds = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60
+
+                                statusText.text = String.format(
+                                    "%02d:%02d:%02d till end of sale", hours, minutes, seconds)
+                                statusText.setTextColor(Color.parseColor("#FF9800"))
+                            }
+
+                            override fun onFinish() {
+                                statusText.text = "Sales closed"
+                                statusText.setTextColor(Color.RED)
+
+                                buyButton.text = "Gate only"
+                                buyButton.isEnabled = false
+                                buyButton.setBackgroundColor(Color.DKGRAY)
+                            }
+                        }.start()
+                    } else {
+                        statusText.text = "Available now"
+                        statusText.setTextColor(Color.parseColor("#4CAF50"))
+
+                        buyButton.isEnabled = true
+                        buyButton.text = "Get Tickets"
                     }
 
-                    object : CountDownTimer(timeDifference, 1000) {
-                        override fun onTick(millisUntilFinished: Long) {
-                            val hours = TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
-                            val minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)%60
-                            val seconds = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)%60
-
-                            statusText.text = String.format("%02d:%02d:%02d till end of sale", hours, minutes, seconds)
-                            statusText.setTextColor(Color.parseColor("#FF9800"))
-                        }
-
-                        override fun onFinish() {
-                            statusText.text = "Sales closed"
-                            statusText.setTextColor(Color.RED)
-
-                            buyButton.text = "Gate only"
-                            buyButton.isEnabled = false
-                            buyButton.setBackgroundColor(Color.DKGRAY)
-                        }
-                    }.start()
-                }else{
-                    statusText.text = "Available now"
-                    statusText.setTextColor(Color.parseColor("#4CAF50"))
-
-                    buyButton.isEnabled = true
-                    buyButton.text = "Get Tickets"
-
-                    buyButton.setOnClickListener{
+                    buyButton.setOnClickListener {
                         val checkoutFragment = CheckoutFragment()
 
                         val bundle = Bundle()

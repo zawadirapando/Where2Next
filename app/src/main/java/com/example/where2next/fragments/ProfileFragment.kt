@@ -77,7 +77,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private fun setupClickListeners(view: View) {
         view.findViewById<View>(R.id.buttonMyEvents).setOnClickListener {
-            Toast.makeText(context, "Opening My Events...", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frameLayout,  MyEventsFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         view.findViewById<View>(R.id.buttonMyInterests).setOnClickListener {
