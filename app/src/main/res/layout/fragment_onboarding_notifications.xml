@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="80dp"
+        android:src="@android:drawable/ic_popup_reminder"
+        app:tint="@color/design_default_color_primary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Never miss an event"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get notified when events you like are happening near you or when your favorite artists announce a show."
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:layout_marginTop="12dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/buttonEnableNotifications"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Enable Notifications"
+        android:background="@drawable/button_background"/>
+
+    <Button
+        android:id="@+id/buttonSkipNotifications"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Maybe Later"
+        android:textColor="@android:color/darker_gray" />
+</LinearLayout>

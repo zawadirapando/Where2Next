@@ -70,6 +70,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-functions-ktx:20.4.0")
     implementation("com.google.android.libraries.places:places:3.3.0")
     implementation("com.google.maps.android:android-maps-utils:3.8.2")
 }

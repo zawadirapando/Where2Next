@@ -91,4 +91,14 @@ class ChangePasswordFragment : Fragment(R.layout.fragment_change_password) {
         buttonUpdate.text = "Update Password"
         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
     }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.GONE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
+    }
 }

@@ -8,7 +8,7 @@
     android:paddingBottom="30dp">
 
     <LinearLayout
-        android:id="@+id/toolbarInterests"
+        android:id="@+id/toolbarPayout"
         android:layout_width="match_parent"
         android:layout_marginTop="38dp"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Interests"
+            android:text="Payout Methods"
             android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -51,26 +51,52 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select the types of events you want to see more of:"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp" />
+                android:text="Where should we send your ticket sales?"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupInterests"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:chipSpacingVertical="12dp"
-                app:singleSelection="false">
-            </com.google.android.material.chip.ChipGroup>
+                android:text="Enter the M-Pesa registered phone number to receive your funds when users buy tickets."
+                android:textColor="#888888"
+                android:layout_marginBottom="24dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="M-Pesa Phone Number"
+                app:startIconDrawable="@drawable/ic_home"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputMpesaNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:paddingStart="48dp"
+                    android:maxLength="12" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Format: 2547XXXXXXXX or 07XXXXXXXX"
+                android:textSize="12sp"
+                android:textColor="#888888"/>
+
         </LinearLayout>
     </ScrollView>
 
     <Button
-        android:id="@+id/buttonSaveInterests"
+        android:id="@+id/buttonSavePayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Save Interests"
+        android:text="Save Payout Method"
         android:background="@drawable/button_background"/>
 
 </LinearLayout>

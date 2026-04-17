@@ -130,16 +130,16 @@ class CheckoutFragment : Fragment() {
                 }.addOnSuccessListener { mintedTicket ->
                     Toast.makeText(requireContext(), "Payment successful!", Toast.LENGTH_SHORT).show()
 
-                    val receiptFragment = TicketReceiptFragment()
+                    val paymentFragment = PaymentFragment()
 
                     val bundle = Bundle()
                     bundle.putParcelable("SELECTED_EVENT", event)
                     bundle.putParcelable("PURCHASED_TICKET", mintedTicket)
 
-                    receiptFragment.arguments = bundle
+                    paymentFragment.arguments = bundle
 
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout, receiptFragment)
+                        .replace(R.id.frameLayout, paymentFragment)
                         .addToBackStack(null)
                         .commit()
 

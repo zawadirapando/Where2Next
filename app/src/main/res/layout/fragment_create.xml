@@ -325,66 +325,11 @@
             android:layout_marginBottom="8dp"/>
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupTags"
+            android:id="@+id/chipGroupCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            app:chipSpacingVertical="8dp"
             app:singleSelection="false">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipNightlife"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nightlife"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                app:chipBackgroundColor="@color/chip_background_state"
-                app:checkedIconVisible="false"/>
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipMusic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Music"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                app:chipBackgroundColor="@color/chip_background_state"
-                app:checkedIconVisible="false"/>
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipTech"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tech"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                app:chipBackgroundColor="@color/chip_background_state"
-                app:checkedIconVisible="false"/>
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipEducation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Education"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                app:chipBackgroundColor="@color/chip_background_state"
-                app:checkedIconVisible="false"/>
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipArt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Art"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                app:chipBackgroundColor="@color/chip_background_state"
-                app:checkedIconVisible="false"/>
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipSports"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sports"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                app:chipBackgroundColor="@color/chip_background_state"
-                app:checkedIconVisible="false"/>
-
         </com.google.android.material.chip.ChipGroup>
 
         <com.google.android.material.button.MaterialButton

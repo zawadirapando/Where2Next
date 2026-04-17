@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="What do you love?"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick at least 3 to help us personalize your feed."
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="24dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupOnboarding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingVertical="12dp"
+            app:singleSelection="false">
+        </com.google.android.material.chip.ChipGroup>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/buttonContinueInterests"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Continue"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/button_background"/>
+</LinearLayout>

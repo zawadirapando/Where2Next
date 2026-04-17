@@ -332,4 +332,14 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
     }
 
+    override fun onResume() {
+        super.onResume()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.GONE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
+    }
+
 }

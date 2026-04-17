@@ -45,4 +45,14 @@ class ThemeFragment : Fragment() {
             AppCompatDelegate.setDefaultNightMode(mode)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.GONE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
+    }
 }

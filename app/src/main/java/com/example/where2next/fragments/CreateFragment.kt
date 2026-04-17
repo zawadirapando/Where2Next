@@ -20,6 +20,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.GeoPoint
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -53,6 +54,20 @@ class CreateFragment : Fragment(R.layout.fragment_create) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val categories = listOf("Live Music", "Tech", "Food", "Art", "Sports", "Networking", "Nightlife", "Workshops")
+
+        val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroupCreate)
+
+        for (category in categories) {
+            val chip = Chip(requireContext()).apply {
+                text = category
+                isCheckable = true
+                
+                setChipBackgroundColorResource(R.color.chip_background_state)
+            }
+            chipGroup.addView(chip)
+        }
 
         val buttonUploadImage = view.findViewById<Button>(R.id.buttonUploadImage)
         buttonUploadImage.setOnClickListener {

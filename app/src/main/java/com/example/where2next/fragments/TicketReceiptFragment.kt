@@ -35,7 +35,7 @@ class TicketReceiptFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val event = arguments?.getParcelable<Event>("SELECTED_EVENT")
-        val ticket = arguments?.getParcelable<Ticket>("PURCHASEDx`_TICKET")
+        val ticket = arguments?.getParcelable<Ticket>("PURCHASED_TICKET")
 
         viewPagerTickets = view.findViewById(R.id.viewPagerTickets)
         tabLayoutDots = view.findViewById(R.id.tabLayoutTicketDots)

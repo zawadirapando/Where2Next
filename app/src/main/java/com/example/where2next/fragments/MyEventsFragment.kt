@@ -73,4 +73,14 @@ class MyEventsFragment : Fragment() {
                 progressBar.visibility = View.GONE
             }
     }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.GONE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
+    }
 }

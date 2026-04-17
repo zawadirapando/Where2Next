@@ -48,7 +48,7 @@ class UpcomingTicketsFragment : Fragment(R.layout.fragment_upcoming_tickets) {
 
         val bundle = Bundle()
 
-        bundle.putParcelable("SELECTED_TICKET", clickedTicket)
+        bundle.putParcelable("PURCHASED_TICKET", clickedTicket)
         bundle.putParcelable("SELECTED_EVENT", clickedEvent)
 
         ticketFragment.arguments = bundle
@@ -67,19 +67,26 @@ class UpcomingTicketsFragment : Fragment(R.layout.fragment_upcoming_tickets) {
             .get()
             .addOnSuccessListener { ticketSnapshot ->
 
-                ticketList.clear()
-
+                // If there are no tickets, clear and notify immediately
                 if (ticketSnapshot.isEmpty) {
+                    ticketList.clear()
                     walletAdapter.notifyDataSetChanged()
                     return@addOnSuccessListener
                 }
 
-                // 1. Create a temporary list to hold the data while it downloads
                 val temporaryList = mutableListOf<Pair<Ticket, Event>>()
-
-                // 2. Track how many documents we need to download
                 val totalTicketsToProcess = ticketSnapshot.size()
                 var processedCount = 0
+
+                // Helper function to handle the final UI update safely
+                fun checkAndUpdateAdapter() {
+                    if (processedCount == totalTicketsToProcess) {
+                        // Update the main list and notify ONLY when everything is done
+                        ticketList.clear()
+                        ticketList.addAll(temporaryList)
+                        walletAdapter.notifyDataSetChanged()
+                    }
+                }
 
                 for (document in ticketSnapshot.documents) {
                     val ticket = document.toObject(Ticket::class.java)
@@ -90,33 +97,23 @@ class UpcomingTicketsFragment : Fragment(R.layout.fragment_upcoming_tickets) {
                                 val event = eventSnapshot.toObject(Event::class.java)
 
                                 if (event != null) {
-                                    val currentDate = Date() // Gets exactly right now
-
-
+                                    val currentDate = Date()
                                     if (event.dateAndTime != null && event.dateAndTime!!.after(currentDate)) {
                                         temporaryList.add(Pair(ticket, event))
                                     }
                                 }
 
-
                                 processedCount++
-
-
-                                if (processedCount == totalTicketsToProcess) {
-
-
-                                    ticketList.addAll(temporaryList)
-
-
-                                    walletAdapter.notifyDataSetChanged()
-                                }
+                                checkAndUpdateAdapter() // Check if we are done
                             }
                             .addOnFailureListener {
-                                processedCount++
                                 Log.e("Wallet", "Failed to find matching event")
+                                processedCount++
+                                checkAndUpdateAdapter() // Must check here too!
                             }
                     } else {
-                        processedCount++ // Tick the counter if the ticket itself was broken
+                        processedCount++
+                        checkAndUpdateAdapter() // And must check here!
                     }
                 }
             }

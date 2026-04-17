@@ -11,7 +11,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class InterestsFragment : Fragment(R.layout.fragment_interests) {
+class OnboardingInterestsFragment : Fragment(R.layout.fragment_onboarding_interests) {
 
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
@@ -21,8 +21,8 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
 
         val categories = listOf("Live Music", "Tech", "Food", "Art", "Sports", "Networking", "Nightlife", "Workshops")
 
-        val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroupInterests)
-        val btnSave = view.findViewById<Button>(R.id.buttonSaveInterests)
+        val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroupOnboarding)
+        val btnContinue = view.findViewById<Button>(R.id.buttonContinueInterests)
 
         for (category in categories) {
             val chip = Chip(requireContext()).apply {
@@ -34,7 +34,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
             chipGroup.addView(chip)
         }
 
-        btnSave.setOnClickListener {
+        btnContinue.setOnClickListener {
             val selectedInterests = mutableListOf<String>()
             for (i in 0 until chipGroup.childCount) {
                 val chip = chipGroup.getChildAt(i) as? Chip
@@ -56,6 +56,7 @@ class InterestsFragment : Fragment(R.layout.fragment_interests) {
                         // Navigate to Step 3: Notifications
                         parentFragmentManager.beginTransaction()
                             .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                            .replace(R.id.onboarding_fragment_container, OnboardingNotificationsFragment())
                             .addToBackStack(null)
                             .commit()
                     }

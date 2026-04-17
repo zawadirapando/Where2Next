@@ -51,9 +51,8 @@ class SignupActivity : AppCompatActivity() {
 
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful){
+                    if (task.isSuccessful) {
                         val userId = auth.currentUser?.uid
-
                         val userProfile = hashMapOf(
                             "firstName" to firstName,
                             "lastName" to lastName,
@@ -62,21 +61,27 @@ class SignupActivity : AppCompatActivity() {
                             "interestedTags" to listOf<String>()
                         )
 
-                        if (userId != null){
+                        if (userId != null) {
                             db.collection("users").document(userId)
                                 .set(userProfile)
                                 .addOnSuccessListener {
-                                    Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show()
-
-                                    val intent = Intent(this, NavigationActivity::class.java)
+                                    // 1. Data saved! NOW go to Onboarding
+                                    val intent = Intent(this, OnboardingActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     startActivity(intent)
                                     finish()
                                 }
-                                .addOnFailureListener() {e ->
-                                    Toast.makeText(this, "Failed to save profile data: ${e.message}", Toast.LENGTH_SHORT).show()
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(this, "Failed to save profile: ${e.message}", Toast.LENGTH_SHORT).show()
+
+                                    // Optional: Even if Firestore fails, you might still want
+                                    // to send them to onboarding so they aren't stuck.
+                                    val intent = Intent(this, OnboardingActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
                                 }
                         }
-                    }else{
+                    } else {
                         Toast.makeText(this, "Sign up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
