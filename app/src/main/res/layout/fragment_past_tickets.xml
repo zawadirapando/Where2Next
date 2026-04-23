@@ -6,12 +6,30 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerTickets"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:shimmer_auto_start="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="12dp">
+            <include layout="@layout/item_event_skeleton" />
+            <include layout="@layout/item_event_skeleton" />
+            <include layout="@layout/item_event_skeleton" />
+            <include layout="@layout/item_event_skeleton" />
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPastTickets"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +39,7 @@
         android:id="@+id/textNoPastTickets"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Past events."
+        android:text="No past events."
         android:textSize="16sp"
         android:textColor="?attr/colorOnSurface"
         android:visibility="gone"
@@ -29,5 +47,27 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/framePastTickets"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewUpcomingTickets"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/textNoUpcomingTickets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No tickets yet!"
+            android:visibility="gone"
+            android:textColor="#888888"
+            android:textSize="16sp" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

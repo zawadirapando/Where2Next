@@ -1,5 +1,7 @@
 package com.example.where2next.fragments
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +11,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,8 +32,19 @@ class OnboardingLocationFragment : Fragment(R.layout.fragment_onboarding_locatio
     private lateinit var adapter: LocationAdapter
     private var currentList = mutableListOf<String>()
 
+    // Handles the location permission result — we proceed either way
+    private val requestLocationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        // Permission granted or denied — either way the user can still
+        // type their city manually, so we just let them continue
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Ask for location permission as soon as this screen appears
+        checkAndRequestLocationPermission()
 
         placesClient = Places.createClient(requireContext())
         val editSearchLocation = view.findViewById<TextInputEditText>(R.id.editOnboardingLocation)
@@ -68,8 +83,42 @@ class OnboardingLocationFragment : Fragment(R.layout.fragment_onboarding_locatio
         })
     }
 
+
+
+    private fun checkAndRequestLocationPermission() {
+        val fineGranted = ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (fineGranted) return // already have it, nothing to do
+
+        // ✅ If user previously denied, show a rationale before re-asking
+        if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Location Access")
+                .setMessage("Allowing location access lets us show you events happening near you.")
+                .setPositiveButton("Allow") { _, _ ->
+                    requestLocationPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                }
+                .setNegativeButton("Skip") { dialog, _ -> dialog.dismiss() }
+                .show()
+        } else {
+            // ✅ First time asking — launch directly
+            requestLocationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
     private fun handleCitySelected(cityName: String, view: View) {
-        // Hide keyboard
         val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
 
@@ -78,7 +127,6 @@ class OnboardingLocationFragment : Fragment(R.layout.fragment_onboarding_locatio
             db.collection("users").document(userId)
                 .update("location", cityName)
                 .addOnSuccessListener {
-                    // Navigate to Step 2: Interests
                     parentFragmentManager.beginTransaction()
                         .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                         .replace(R.id.onboarding_fragment_container, OnboardingInterestsFragment())
@@ -91,7 +139,6 @@ class OnboardingLocationFragment : Fragment(R.layout.fragment_onboarding_locatio
         }
     }
 
-    // Simple Adapter for Onboarding
     inner class LocationAdapter(
         private val cities: List<String>,
         private val onItemClick: (String) -> Unit

@@ -10,6 +10,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 
 class OnboardingInterestsFragment : Fragment(R.layout.fragment_onboarding_interests) {
 
@@ -19,7 +20,7 @@ class OnboardingInterestsFragment : Fragment(R.layout.fragment_onboarding_intere
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val categories = listOf("Live Music", "Tech", "Food", "Art", "Sports", "Networking", "Nightlife", "Workshops")
+        val categories = listOf("Live Music", "Nightlife", "Food And Drink", "Arts And Culture", "Sports", "Wellness", "Comedy", "Networking", "Markets", "Outdoor", "Film", "Family", "Fashion", "Gaming")
 
         val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroupOnboarding)
         val btnContinue = view.findViewById<Button>(R.id.buttonContinueInterests)
@@ -28,7 +29,6 @@ class OnboardingInterestsFragment : Fragment(R.layout.fragment_onboarding_intere
             val chip = Chip(requireContext()).apply {
                 text = category
                 isCheckable = true
-                // You can apply your styles here
                 setChipBackgroundColorResource(R.color.chip_background_state)
             }
             chipGroup.addView(chip)
@@ -38,8 +38,16 @@ class OnboardingInterestsFragment : Fragment(R.layout.fragment_onboarding_intere
             val selectedInterests = mutableListOf<String>()
             for (i in 0 until chipGroup.childCount) {
                 val chip = chipGroup.getChildAt(i) as? Chip
+                val categoryName = chip?.text.toString()
+
+                val topicName = categoryName.lowercase().replace(" ", "_")
+
                 if (chip?.isChecked == true) {
-                    selectedInterests.add(chip.text.toString())
+                    // FIXED: Saving topicName (e.g. 'live_music') instead of the raw string
+                    selectedInterests.add(topicName)
+                    FirebaseMessaging.getInstance().subscribeToTopic(topicName)
+                } else {
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(topicName)
                 }
             }
 
@@ -51,9 +59,8 @@ class OnboardingInterestsFragment : Fragment(R.layout.fragment_onboarding_intere
             val userId = auth.currentUser?.uid
             if (userId != null) {
                 db.collection("users").document(userId)
-                    .update("interests", selectedInterests)
+                    .update("tags", selectedInterests)
                     .addOnSuccessListener {
-                        // Navigate to Step 3: Notifications
                         parentFragmentManager.beginTransaction()
                             .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                             .replace(R.id.onboarding_fragment_container, OnboardingNotificationsFragment())

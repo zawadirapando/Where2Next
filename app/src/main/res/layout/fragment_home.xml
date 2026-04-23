@@ -20,7 +20,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="55dp"
             app:tint="?attr/colorOnSurface"
-            android:src="@drawable/ic_home"
+            android:src="@drawable/ic_location"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -43,7 +43,7 @@
             android:layout_height="20dp"
             android:layout_marginStart="6dp"
             app:tint="?attr/colorOnSurface"
-            android:src="@drawable/ic_home"
+            android:src="@drawable/outline_arrow_drop_down_24"
             app:layout_constraintBottom_toBottomOf="@id/textCurrentLocation"
             app:layout_constraintStart_toEndOf="@id/textCurrentLocation"
             app:layout_constraintTop_toTopOf="@id/textCurrentLocation"/>
@@ -71,7 +71,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     app:tint="#888888"
-                    android:src="@drawable/ic_home" />
+                    android:src="@drawable/ic_search" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -96,12 +96,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardSearch"/>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/carouselPopularEvents"
+
+        <FrameLayout
+            android:id="@+id/carouselContainer"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_marginTop="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/titlePopular" />
+            app:layout_constraintTop_toBottomOf="@id/titlePopular">
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerCarousel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:shimmer_auto_start="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <include layout="@layout/item_carousel_skeleton" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginHorizontal="16dp"/>
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/carouselPopularEvents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayoutDots"
@@ -109,7 +130,7 @@
             android:layout_height="13dp"
             android:layout_marginTop="4dp"
             android:background="@android:color/transparent"
-            app:layout_constraintTop_toBottomOf="@+id/carouselPopularEvents"
+            app:layout_constraintTop_toBottomOf="@+id/carouselContainer"
             app:tabBackground="@drawable/tab_indicator"
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
@@ -129,15 +150,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabLayoutDots" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <FrameLayout
+            android:id="@+id/discoverContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:nestedScrollingEnabled="false"
-            app:layout_constraintTop_toBottomOf="@id/titleDiscover"
-            tools:listitem="@layout/item_event_card" />
+            app:layout_constraintTop_toBottomOf="@id/titleDiscover">
 
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerDiscover"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:shimmer_auto_start="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <include layout="@layout/item_event_skeleton" />
+                    <include layout="@layout/item_event_skeleton" />
+                    <include layout="@layout/item_event_skeleton" />
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_event_card" />
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

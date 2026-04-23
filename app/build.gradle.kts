@@ -10,10 +10,11 @@ plugins {
 android {
     namespace = "com.example.where2next"
     compileSdk = 36
+    compileSdkExtension = 19
 
     defaultConfig {
         applicationId = "com.example.where2next"
-        minSdk = 24
+        minSdk = 31
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -64,6 +65,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.pdf.viewer)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,4 +75,9 @@ dependencies {
     implementation("com.google.firebase:firebase-functions-ktx:20.4.0")
     implementation("com.google.android.libraries.places:places:3.3.0")
     implementation("com.google.maps.android:android-maps-utils:3.8.2")
+    implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }

@@ -22,7 +22,7 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/ic_arrow_back"
             app:tint="?attr/colorOnSurface" />
 
         <TextView
@@ -82,6 +82,7 @@
                         android:layout_marginBottom="16dp">
 
                         <TextView
+                            android:id="@+id/textCheckoutQuantityDescription"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -138,8 +139,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="M-Pesa Phone Number"
-                app:helperText="Enter number as 2547XXXXXXXX"
+                app:helperText="Enter the remaining digits e.g. 7XXXXXXXX"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:prefixText="254"
                 app:boxCornerRadiusTopStart="10dp"
                 app:boxCornerRadiusTopEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
@@ -150,7 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="phone"
-                    android:maxLength="12" />
+                    android:maxLength="9" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

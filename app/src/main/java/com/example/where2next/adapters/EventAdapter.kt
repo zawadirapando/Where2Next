@@ -39,6 +39,7 @@ class EventAdapter(
 
         Glide.with(holder.itemView.context)
             .load(currentEvent.coverImageUrl)
+            .placeholder(R.color.light_gray)
             .centerCrop()
             .into(holder.imageCover)
 

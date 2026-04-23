@@ -26,7 +26,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_revert"
+                android:src="@drawable/ic_arrow_back"
                 app:tint="?attr/colorOnSurface"
                 android:contentDescription="Back" />
 
@@ -183,7 +183,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_lock_idle_lock"
+                android:src="@drawable/ic_lock"
                 app:tint="#888888" />
 
             <TextView
@@ -198,7 +198,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@android:drawable/ic_menu_edit"
+                android:src="@drawable/ic_edit"
                 app:tint="#888888" />
         </LinearLayout>
 

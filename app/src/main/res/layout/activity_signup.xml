@@ -57,6 +57,7 @@
         android:padding="14dp"
         android:textSize="15sp"
         android:textColor="?attr/colorOnSurface"
+        android:textCursorDrawable="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textFname"
@@ -83,6 +84,7 @@
         android:padding="14dp"
         android:textSize="15sp"
         android:textColor="?attr/colorOnSurface"
+        android:textCursorDrawable="@null"
         app:layout_constraintStart_toStartOf="@+id/textLname"
         app:layout_constraintTop_toBottomOf="@+id/textLname"
         app:layout_constraintWidth_percent="0.86" />
@@ -107,6 +109,7 @@
         android:padding="14dp"
         android:textSize="15sp"
         android:textColor="?attr/colorOnSurface"
+        android:textCursorDrawable="@null"
         app:layout_constraintStart_toStartOf="@+id/textEmail"
         app:layout_constraintTop_toBottomOf="@+id/textEmail"
         app:layout_constraintWidth_percent="0.86" />
@@ -131,6 +134,7 @@
         android:padding="14dp"
         android:textSize="15sp"
         android:textColor="?attr/colorOnSurface"
+        android:textCursorDrawable="@null"
         app:layout_constraintStart_toStartOf="@+id/textPhone"
         app:layout_constraintTop_toBottomOf="@+id/textPhone"
         app:layout_constraintWidth_percent="0.86" />
@@ -165,6 +169,7 @@
             android:padding="14dp"
             android:textSize="15sp"
             android:textColor="?attr/colorOnSurface"
+            android:textCursorDrawable="@null"
             android:background="@drawable/edittext_background"
             android:minLines="8"
 

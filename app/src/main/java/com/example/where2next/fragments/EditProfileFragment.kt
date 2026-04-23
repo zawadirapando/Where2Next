@@ -14,22 +14,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.where2next.R
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.io.File
 import java.util.UUID
 
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
@@ -39,7 +39,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private lateinit var placesClient: PlacesClient
     private lateinit var locationAdapter: ArrayAdapter<String>
     private val locationNamesList = mutableListOf<String>()
-
     private val placeIdMap = mutableMapOf<String, String>()
 
     private lateinit var editFirstName: TextInputEditText
@@ -54,33 +53,44 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private var originalPhone = ""
     private var originalLocation = ""
 
-    //image tracking
+    // ✅ FIX: Flag to prevent dropdown from showing during programmatic setText
+    private var isLoadingData = false
+
+    // Image tracking
     private var selectedImageUri: Uri? = null
+    private var cameraImageUri: Uri? = null
     private var isImageChanged = false
     private var isImageDeleted = false
 
-    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {uri ->
-        if (uri != null){
-            selectedImageUri =uri
+    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+            selectedImageUri = uri
             isImageChanged = true
-
+            isImageDeleted = false
             imageEditProfile.visibility = View.VISIBLE
-            Glide.with(requireContext())
-                .load(uri)
-                .circleCrop()
-                .into(imageEditProfile)
-
+            Glide.with(requireContext()).load(uri).circleCrop().into(imageEditProfile)
             checkForChanges()
         }
     }
 
-    //google places
-    private val autoCompleteLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null){
-            val place = Autocomplete.getPlaceFromIntent(result.data!!)
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success && cameraImageUri != null) {
+            selectedImageUri = cameraImageUri
+            isImageChanged = true
+            isImageDeleted = false
+            imageEditProfile.visibility = View.VISIBLE
+            Glide.with(requireContext()).load(cameraImageUri).circleCrop().into(imageEditProfile)
+            checkForChanges()
+        } else {
+            Toast.makeText(requireContext(), "Camera action cancelled", Toast.LENGTH_SHORT).show()
+        }
+    }
 
+    private val autoCompleteLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val place = Autocomplete.getPlaceFromIntent(result.data!!)
             editLocation.setText(place.name)
-        } else if (result.resultCode == AutocompleteActivity.RESULT_ERROR){
+        } else if (result.resultCode == AutocompleteActivity.RESULT_ERROR) {
             val status = Autocomplete.getStatusFromIntent(result.data!!)
             Toast.makeText(requireContext(), "Error: ${status.statusMessage}", Toast.LENGTH_LONG).show()
         }
@@ -96,11 +106,9 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         buttonSaveChanges = view.findViewById(R.id.buttonSaveChanges)
         imageEditProfile = view.findViewById(R.id.imageEditProfile)
 
-        //google
-        if (!Places.isInitialized()){
+        if (!Places.isInitialized()) {
             Places.initialize(requireContext(), com.example.where2next.BuildConfig.MAPS_API_KEY)
         }
-
         placesClient = Places.createClient(requireContext())
 
         locationAdapter = ArrayAdapter(
@@ -110,56 +118,52 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         )
         editLocation.setAdapter(locationAdapter)
 
-        //keystrokes
+        // ✅ FIX: Only trigger Places search when the user is actively typing, not during data load
         editLocation.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
+                // Skip autocomplete entirely while we're loading saved data
+                if (isLoadingData) return
+
                 val query = s.toString()
+                if (query.length < 2) return // also avoid firing on empty/single char
 
-                if (query.length > 0){
-                    val request = FindAutocompletePredictionsRequest.builder()
-                        .setQuery(query)
-                        .build()
+                val request = FindAutocompletePredictionsRequest.builder()
+                    .setQuery(query)
+                    .setCountries(listOf("KE"))
+                    .build()
 
-                    placesClient.findAutocompletePredictions(request)
-                        .addOnSuccessListener { response ->
-                            locationNamesList.clear()
-                            placeIdMap.clear()
-
-                            for (prediction in response.autocompletePredictions) {
-                                val cityName = prediction.getFullText(null).toString()
-                                locationNamesList.add(cityName)
-                                placeIdMap[cityName] = prediction.placeId
-                            }
-
-                            val newAdapter = ArrayAdapter(
-                                requireContext(),
-                                android.R.layout.simple_dropdown_item_1line,
-                                locationNamesList
-                            )
-                            editLocation.setAdapter(newAdapter)
-
-                            editLocation.showDropDown()
+                placesClient.findAutocompletePredictions(request)
+                    .addOnSuccessListener { response ->
+                        locationNamesList.clear()
+                        placeIdMap.clear()
+                        for (prediction in response.autocompletePredictions) {
+                            val cityName = prediction.getFullText(null).toString()
+                            locationNamesList.add(cityName)
+                            placeIdMap[cityName] = prediction.placeId
                         }
-                        .addOnFailureListener{ e->
-                            Toast.makeText(requireContext(), "Google Error: ${e.message}", Toast.LENGTH_LONG).show()
-                        }
-                }
+                        val newAdapter = ArrayAdapter(
+                            requireContext(),
+                            android.R.layout.simple_dropdown_item_1line,
+                            locationNamesList
+                        )
+                        editLocation.setAdapter(newAdapter)
+                        editLocation.showDropDown()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(requireContext(), "Google Error: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
             }
         })
 
-        editLocation.setOnItemClickListener { parent, view, position, id ->
+        editLocation.setOnItemClickListener { _, v, position, _ ->
             val selectedCityName = locationNamesList[position]
-
             editLocation.setText(selectedCityName)
-
             val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            imm.hideSoftInputFromWindow(v.windowToken, 0)
         }
 
-        //buttons
         view.findViewById<ImageButton>(R.id.buttonBack).setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -168,14 +172,14 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             showImageOptionsDialog()
         }
 
-        view.findViewById<LinearLayout>(R.id.buttonChangePassword).setOnClickListener{
+        view.findViewById<LinearLayout>(R.id.buttonChangePassword).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.frameLayout, ChangePasswordFragment())
                 .addToBackStack(null)
                 .commit()
         }
 
-        buttonSaveChanges.setOnClickListener{
+        buttonSaveChanges.setOnClickListener {
             startSaveProcess()
         }
 
@@ -183,9 +187,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         setupTextWatchers()
     }
 
-    private fun showImageOptionsDialog(){
+    private fun showImageOptionsDialog() {
         val options = arrayOf("Choose from Gallery", "Take Photo", "Remove Photo", "Cancel")
-
         android.app.AlertDialog.Builder(requireContext())
             .setTitle("Profile Picture")
             .setItems(options) { dialog, which ->
@@ -195,21 +198,28 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     2 -> removePhoto()
                     3 -> dialog.dismiss()
                 }
-            }
-            .show()
+            }.show()
     }
 
     private fun removePhoto() {
         selectedImageUri = null
         isImageChanged = true
         isImageDeleted = true
-
         imageEditProfile.visibility = View.GONE
         checkForChanges()
     }
 
     private fun openCamera() {
-        Toast.makeText(requireContext(), "Camera setup coming next!", Toast.LENGTH_SHORT).show()
+        try {
+            val photoFile = File.createTempFile(
+                "IMG_${System.currentTimeMillis()}_", ".jpg", requireContext().cacheDir
+            )
+            val authority = "${requireContext().packageName}.fileprovider"
+            cameraImageUri = FileProvider.getUriForFile(requireContext(), authority, photoFile)
+            takePictureLauncher.launch(cameraImageUri!!)
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Failed to open camera: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun fetchUserData(view: View) {
@@ -217,17 +227,23 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         db.collection("users").document(currentUser.uid).get()
             .addOnSuccessListener { document ->
-                if (document !=null && document.exists()) {
+                if (document != null && document.exists()) {
                     originalFname = document.getString("firstName") ?: ""
                     originalLname = document.getString("lastName") ?: ""
                     originalPhone = document.getString("phone") ?: ""
                     originalLocation = document.getString("location") ?: ""
                     val profileImageUrl = document.getString("profileImageUrl") ?: ""
 
+                    // ✅ FIX: Set flag before programmatic setText calls
+                    isLoadingData = true
+
                     editFirstName.setText(originalFname)
                     editLastName.setText(originalLname)
                     editPhoneNumber.setText(originalPhone)
                     editLocation.setText(originalLocation)
+
+                    // ✅ FIX: Clear flag after all setText calls are done
+                    isLoadingData = false
 
                     val textInitials = view.findViewById<TextView>(R.id.textEditInitials)
                     val imageProfile = view.findViewById<ImageView>(R.id.imageEditProfile)
@@ -236,15 +252,13 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     val lastI = originalLname.firstOrNull()?.uppercaseChar() ?: ""
                     textInitials.text = "$firstI$lastI"
 
-                    if(profileImageUrl.isNotEmpty()) {
+                    if (profileImageUrl.isNotEmpty()) {
                         imageProfile.visibility = View.VISIBLE
-                        Glide.with(requireContext())
-                            .load(profileImageUrl)
-                            .into(imageProfile)
+                        Glide.with(requireContext()).load(profileImageUrl).circleCrop().into(imageProfile)
                     }
                 }
             }
-            .addOnFailureListener{
+            .addOnFailureListener {
                 Toast.makeText(requireContext(), "Failed to load data", Toast.LENGTH_SHORT).show()
             }
     }
@@ -253,11 +267,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                checkForChanges()
-            }
+            override fun afterTextChanged(s: Editable?) { checkForChanges() }
         }
-
         editFirstName.addTextChangedListener(textWatcher)
         editLastName.addTextChangedListener(textWatcher)
         editPhoneNumber.addTextChangedListener(textWatcher)
@@ -271,22 +282,21 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val currentLocation = editLocation.text.toString().trim()
 
         val hasChanged = currentFirst != originalFname ||
-                         currentLast != originalLname ||
-                         currentPhone != originalPhone ||
-                         currentLocation != originalLocation ||
-                         isImageChanged
+                currentLast != originalLname ||
+                currentPhone != originalPhone ||
+                currentLocation != originalLocation ||
+                isImageChanged
 
         buttonSaveChanges.isEnabled = hasChanged
     }
 
-    private fun startSaveProcess(){
+    private fun startSaveProcess() {
         buttonSaveChanges.isEnabled = false
         buttonSaveChanges.text = "Saving..."
 
-        if (isImageChanged && selectedImageUri != null){
+        if (isImageChanged && selectedImageUri != null) {
             val fileName = UUID.randomUUID().toString() + ".jpg"
-            val storageRef = FirebaseStorage.getInstance().reference.child("ProfileImages/&fileName")
-
+            val storageRef = FirebaseStorage.getInstance().reference.child("ProfileImages/$fileName")
             storageRef.putFile(selectedImageUri!!)
                 .addOnSuccessListener {
                     storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
@@ -298,12 +308,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     buttonSaveChanges.isEnabled = true
                     buttonSaveChanges.text = "Save Changes"
                 }
-        }else if (isImageDeleted){
+        } else if (isImageDeleted) {
             updateFirestore("")
-        }else {
+        } else {
             updateFirestore(null)
         }
-
     }
 
     private fun updateFirestore(newImageUrl: String?) {
@@ -316,9 +325,10 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             "location" to editLocation.text.toString().trim()
         )
 
-        if(newImageUrl != null){
+        if (newImageUrl != null) {
             updates["profileImageUrl"] = newImageUrl
         }
+
         db.collection("users").document(currentUser.uid)
             .update(updates)
             .addOnSuccessListener {
@@ -341,5 +351,4 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         super.onDestroyView()
         requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
     }
-
 }

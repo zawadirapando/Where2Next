@@ -30,77 +30,108 @@
             app:strokeWidth="0dp"
             android:layout_marginBottom="24dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardAvatar"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    app:cardCornerRadius="40dp"
-                    app:cardBackgroundColor="@color/material_dynamic_primary70"
-                    app:strokeWidth="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <TextView
-                        android:id="@+id/textAvatarInitials"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="JD"
-                        android:textColor="@color/white"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:id="@+id/imageProfile"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:visibility="gone" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <TextView
-                    android:id="@+id/textProfileName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Loading Name..."
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/textProfileLocation"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/cardAvatar"
-                    app:layout_constraintTop_toTopOf="@+id/cardAvatar"
-                    app:layout_constraintVertical_chainStyle="packed" />
-
-                <TextView
-                    android:id="@+id/textProfileLocation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Nairobi, Kenya"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/cardAvatar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/cardAvatar"
-                    app:layout_constraintTop_toBottomOf="@+id/textProfileName" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonEditProfile"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerProfileCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Edit Details"
-                    app:layout_constraintTop_toBottomOf="@+id/cardAvatar" />
+                    app:shimmer_auto_start="true">
+                    <include layout="@layout/item_profile_skeleton" />
+                </com.facebook.shimmer.ShimmerFrameLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/profileContentLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardAvatar"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:cardCornerRadius="40dp"
+
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/textAvatarInitials"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="JD"
+                            android:textColor="@color/white"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/imageProfile"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:id="@+id/textProfileName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="Loading Name..."
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/textProfileEmail"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/cardAvatar"
+                        app:layout_constraintTop_toTopOf="@+id/cardAvatar"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/textProfileEmail"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="3dp"
+                        android:text="email@example.com"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toTopOf="@+id/textProfileLocation"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/cardAvatar"
+                        app:layout_constraintTop_toBottomOf="@+id/textProfileName"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/textProfileLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="3dp"
+                        android:text="Nairobi, Kenya"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/cardAvatar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/cardAvatar"
+                        app:layout_constraintTop_toBottomOf="@+id/textProfileEmail" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonEditProfile"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Edit Details"
+                        app:layout_constraintTop_toBottomOf="@+id/cardAvatar" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </FrameLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
@@ -136,7 +167,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    app:drawableEndCompat="@android:drawable/ic_media_next" />
+                    app:drawableEndCompat="@drawable/baseline_arrow_forward_ios_24" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -173,7 +204,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    app:drawableEndCompat="@android:drawable/ic_media_next" />
+                    app:drawableEndCompat="@drawable/baseline_arrow_forward_ios_24" />
 
                 <View
                     android:layout_width="match_parent"
@@ -194,7 +225,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    app:drawableEndCompat="@android:drawable/ic_media_next" />
+                    app:drawableEndCompat="@drawable/baseline_arrow_forward_ios_24" />
 
                 <View
                     android:layout_width="match_parent"
@@ -215,7 +246,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    app:drawableEndCompat="@android:drawable/ic_media_next" />
+                    app:drawableEndCompat="@drawable/baseline_arrow_forward_ios_24" />
 
                 <View
                     android:layout_width="match_parent"
@@ -229,14 +260,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:text="Help Center"
+                    android:text="Contact Us"
                     android:textSize="16sp"
                     android:padding="16dp"
                     android:textColor="?attr/colorOnSurface"
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    app:drawableEndCompat="@android:drawable/ic_media_next" />
+                    app:drawableEndCompat="@drawable/baseline_arrow_forward_ios_24" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

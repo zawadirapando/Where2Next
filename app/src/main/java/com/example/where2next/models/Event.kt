@@ -10,12 +10,9 @@ import kotlinx.parcelize.TypeParceler
 import java.util.Date
 
 object GeoPointParceler : Parceler<GeoPoint?> {
-
-
     override fun create(parcel: Parcel): GeoPoint? {
         val isPresent = parcel.readInt()
         return if (isPresent == 1) {
-
             val lat = parcel.readDouble()
             val lng = parcel.readDouble()
             GeoPoint(lat, lng)
@@ -40,6 +37,7 @@ object GeoPointParceler : Parceler<GeoPoint?> {
 data class Event (
     var eventId: String = "",
     var title: String = "",
+    var searchTitle: String = "", // Added to fix the EventSearchFragment query
     var description: String = "",
     var creatorId: String = "",
     var host: String = "",

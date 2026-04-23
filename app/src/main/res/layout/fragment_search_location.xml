@@ -26,7 +26,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="39dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_home"
+        android:src="@drawable/ic_cancel"
         app:tint="?attr/colorOnSurface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -42,7 +42,7 @@
         app:boxCornerRadiusTopEnd="10dp"
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusBottomEnd="10dp"
-        app:startIconDrawable="@drawable/ic_home"
+        app:startIconDrawable="@drawable/ic_search"
         app:endIconMode="clear_text"
         app:layout_constraintTop_toBottomOf="@id/titleSearch">
 

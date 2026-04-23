@@ -1,12 +1,11 @@
 package com.example.where2next
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.where2next.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -22,13 +21,23 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        binding.textSignUp.setOnClickListener{
+        binding.textSignUp.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        binding.btnLogIn.setOnClickListener{
+        // Forgot Password Logic
+        binding.textForgotPassword.setOnClickListener {
+            val currentEmail = binding.editEmail.text.toString().trim()
+
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
+            // Pass the email so the user doesn't have to type it twice
+            intent.putExtra("PREFILL_EMAIL", currentEmail)
+            startActivity(intent)
+        }
+
+        binding.btnLogIn.setOnClickListener {
             val email = binding.editEmail.text.toString().trim()
             val password = binding.editPassword.text.toString().trim()
 
@@ -38,17 +47,16 @@ class LoginActivity : AppCompatActivity() {
             }
 
             auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) {task ->
+                .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show()
 
                         val intent = Intent(this, NavigationActivity::class.java)
                         startActivity(intent)
                         finish()
-                    }else {
+                    } else {
                         Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
-
                 }
         }
     }

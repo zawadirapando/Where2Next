@@ -1,141 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
-    android:fillViewport="true">
+    android:background="?attr/colorSurface">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/progressTicketReceipt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:indeterminateTint="?attr/colorPrimaryVariant"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="10dp"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="32dp" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPagerTickets"
-            android:layout_width="match_parent"
-            android:layout_height="600dp"
-            android:clipToPadding="false"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayoutTicketDots"
-            android:layout_width="wrap_content"
-            android:layout_height="13dp"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            app:tabBackground="@drawable/tab_indicator"
-            app:tabGravity="center"
-            app:tabIndicatorHeight="0dp"
-            app:tabMaxWidth="13dp"
-            app:tabMinWidth="13dp"/>
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/contentTicketReceipt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp">
-            <TextView
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="32dp" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPagerTickets"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:clipToPadding="false"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayoutTicketDots"
                 android:layout_width="wrap_content"
+                android:layout_height="13dp"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                app:tabBackground="@drawable/tab_indicator"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                app:tabMaxWidth="13dp"
+                app:tabMinWidth="13dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Scan at gate"
-                android:textSize="12sp"
-                android:textColor="#9E9E9E"/>
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/arrow_down_float"
-                app:tint="#9E9E9E"/>
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scan at gate"
+                    android:textSize="12sp"
+                    android:textColor="#9E9E9E"/>
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/outline_arrow_drop_down_24"
+                    app:tint="#9E9E9E"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="#E0E0E0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="48dp">
+
+                <TextView
+                    android:id="@+id/btnMenuEventDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp"
+                    android:text="Event details"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    app:drawableEndCompat="@drawable/baseline_arrow_forward_ios_24" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="#F5F5F5"/>
+
+                <TextView
+                    android:id="@+id/btnMenuOrderDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp"
+                    android:text="Order details"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    app:drawableEndCompat="@drawable/baseline_arrow_forward_ios_24" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="#F5F5F5"/>
+
+                <TextView
+                    android:id="@+id/btnMenuDownloadTicket"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp"
+                    android:text="Download ticket"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    app:drawableEndCompat="@drawable/baseline_arrow_forward_ios_24" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="#F5F5F5"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonBackToHome"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="48dp"
+                android:background="@drawable/button_background"
+                android:layout_marginTop="24dp"
+                android:text="Back to Home"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="16sp"
+                app:cornerRadius="12dp" />
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="#E0E0E0" />
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="48dp">
-
-            <TextView
-                android:id="@+id/btnMenuEventDetails"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="24dp"
-                android:text="Event details"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                app:drawableEndCompat="@android:drawable/ic_media_play" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="#F5F5F5"/>
-
-            <TextView
-                android:id="@+id/btnMenuOrderDetails"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="24dp"
-                android:text="Order details"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                app:drawableEndCompat="@android:drawable/ic_media_play" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="#F5F5F5"/>
-
-            <TextView
-                android:id="@+id/btnMenuDownloadTicket"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="24dp"
-                android:text="Download ticket"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                app:drawableEndCompat="@android:drawable/ic_media_play" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="#F5F5F5"/>
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/buttonBackToHome"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="48dp"
-            android:background="@drawable/button_background"
-            android:layout_marginTop="24dp"
-            android:text="Back to Home"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="16sp"
-            app:cornerRadius="12dp" />
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

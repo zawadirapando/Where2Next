@@ -56,6 +56,7 @@
         android:padding="14dp"
         android:textSize="15sp"
         android:textColor="?attr/colorOnSurface"
+        android:textCursorDrawable="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textEmail"
@@ -80,8 +81,7 @@
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="@+id/textPassword"
         app:layout_constraintTop_toBottomOf="@+id/textPassword"
-        app:layout_constraintWidth_percent="0.86"
-        >
+        app:layout_constraintWidth_percent="0.86">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editPassword"
@@ -92,27 +92,34 @@
             android:textSize="15sp"
             android:textColor="?attr/colorOnSurface"
             android:background="@drawable/edittext_background"
-
-            />
+            android:textCursorDrawable="@null" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
-
-
+    <TextView
+        android:id="@+id/textForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Forgot Password?"
+        android:textColor="?attr/colorOnSurface"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintEnd_toEndOf="@+id/textInputPassword"
+        app:layout_constraintTop_toBottomOf="@+id/textInputPassword" />
 
     <Button
         android:id="@+id/btnLogIn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/button_background"
         android:text="Log in"
-        android:textColor="?attr/colorOnSurface"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintStart_toStartOf="@+id/textInputPassword"
-        app:layout_constraintTop_toBottomOf="@+id/textInputPassword"
+        app:layout_constraintTop_toBottomOf="@+id/textForgotPassword"
         app:layout_constraintWidth_percent="0.86"/>
-
 
     <LinearLayout
         android:id="@+id/signUp"

@@ -10,8 +10,8 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginTop="80dp"
-        android:src="@android:drawable/ic_popup_reminder"
-        app:tint="@color/design_default_color_primary" />
+        android:src="@drawable/ic_bell"
+        app:tint="?attr/colorPrimary" />
 
     <TextView
         android:layout_width="wrap_content"

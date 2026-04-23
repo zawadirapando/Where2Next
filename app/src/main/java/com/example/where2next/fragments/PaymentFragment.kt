@@ -1,9 +1,12 @@
 package com.example.where2next.fragments
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -13,127 +16,190 @@ import com.example.where2next.models.Ticket
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.functions.FirebaseFunctions
 
-class PaymentFragment : Fragment(R.layout.fragment_payment) { // Assuming you used my XML
+class PaymentFragment : Fragment(R.layout.fragment_payment) {
 
-        private lateinit var functions: FirebaseFunctions
+    private lateinit var functions: FirebaseFunctions
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        functions = FirebaseFunctions.getInstance()
+        view.findViewById<ImageButton>(R.id.buttonBack).setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
-        val event = arguments?.getParcelable<Event>("SELECTED_EVENT")
-        // Note: The ticket object will be fully created by the backend,
-        // we might not need the incoming one unless it has quantity info.
+        functions = FirebaseFunctions.getInstance("us-central1")
+
+        val event: Event? = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("SELECTED_EVENT", Event::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable("SELECTED_EVENT")
+        }
+
+        val ticket: Ticket? = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("PURCHASED_TICKET", Ticket::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable("PURCHASED_TICKET")
+        }
 
         if (event == null) return
 
-        // Bind UI
         val textEventTitle = view.findViewById<TextView>(R.id.textCheckoutEventTitle)
+        val textQtyDescription = view.findViewById<TextView>(R.id.textCheckoutQuantityDescription)
         val textPrice = view.findViewById<TextView>(R.id.textCheckoutPrice)
         val textTotal = view.findViewById<TextView>(R.id.textCheckoutTotal)
         val buttonPay = view.findViewById<Button>(R.id.buttonPayNow)
         val phoneInput = view.findViewById<TextInputEditText>(R.id.inputCheckoutPhone)
         val loadingOverlay = view.findViewById<View>(R.id.layoutPaymentProcessing)
 
-        // Set UI Data
         textEventTitle.text = event.title
         textPrice.text = "Ksh ${event.ticketPrice.toInt()}"
-        textTotal.text = "Ksh ${event.ticketPrice.toInt()}"
-        buttonPay.text = "Pay Ksh ${event.ticketPrice.toInt()}"
+
+        val quantityToBuy = ticket?.quantity ?: 1
+        val amountToPay = ticket?.totalPaid ?: event.ticketPrice
+
+        textQtyDescription.text = "${quantityToBuy}x General Admission"
+        textTotal.text = "Ksh ${amountToPay.toInt()}"
+        buttonPay.text = "Pay Ksh ${amountToPay.toInt()}"
 
         buttonPay.setOnClickListener {
-            val phone = phoneInput.text.toString().trim()
+            val phoneSuffix = phoneInput.text.toString().trim()
 
-            if (phone.isEmpty() || phone.length < 9) {
-                phoneInput.error = "Enter a valid M-Pesa number"
+            if (phoneSuffix.isEmpty() || phoneSuffix.length < 9) {
+                phoneInput.error = "Enter remaining 9 digits (e.g. 7XXXXXXXX)"
                 return@setOnClickListener
             }
 
-            // 1. Lock the UI so they can't click pay twice
-            loadingOverlay.visibility = View.VISIBLE
+            val phone = "254$phoneSuffix"
 
-            // 2. Prepare data for the Cloud Function
+            loadingOverlay.visibility = View.VISIBLE
+            buttonPay.isEnabled = false
+
             val data = hashMapOf(
                 "phoneNumber" to phone,
                 "eventId" to event.eventId,
-                "amount" to event.ticketPrice,
-                "userId" to auth.currentUser?.uid
+                "amount" to amountToPay,
+                "userId" to auth.currentUser?.uid,
+                "quantity" to quantityToBuy
             )
 
-            // 3. Call the backend to trigger the STK Push
             functions.getHttpsCallable("initiateStkPush")
                 .call(data)
                 .addOnSuccessListener { result ->
-                    // The prompt is now on the user's phone!
-                    val resultMap = result.data as? Map<String, Any>
+                    if (!isAdded) return@addOnSuccessListener
+
+                    val resultMap = result.getData() as? Map<String, Any>
                     val checkoutRequestId = resultMap?.get("checkoutRequestId") as? String
 
                     if (checkoutRequestId != null) {
-                        // 4. Start listening to the database for the webhook result
-                        listenForPaymentSuccess(checkoutRequestId, event)
+                        listenForPaymentSuccess(checkoutRequestId, event, quantityToBuy, amountToPay)
                     } else {
                         loadingOverlay.visibility = View.GONE
-                        Toast.makeText(context, "Payment Error", Toast.LENGTH_SHORT).show()
+                        buttonPay.isEnabled = true
+                        Toast.makeText(requireContext(), "Payment Error. Try again.", Toast.LENGTH_SHORT).show()
                     }
                 }
                 .addOnFailureListener { e ->
+                    if (!isAdded) return@addOnFailureListener
+
                     loadingOverlay.visibility = View.GONE
+                    buttonPay.isEnabled = true
                     Log.e("Payment", "Function failed", e)
-                    Toast.makeText(context, "Network Error. Try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Network Error. Try again.", Toast.LENGTH_SHORT).show()
                 }
         }
     }
 
-    private fun listenForPaymentSuccess(checkoutRequestId: String, event: Event) {
+    private fun listenForPaymentSuccess(
+        checkoutRequestId: String,
+        event: Event,
+        quantity: Int,
+        totalPaid: Double
+    ) {
+        // Capture view references before the async listener fires
         val loadingOverlay = requireView().findViewById<View>(R.id.layoutPaymentProcessing)
+        val buttonPay = requireView().findViewById<Button>(R.id.buttonPayNow)
 
-        // Listen to the specific transaction document the backend just created
-        val listenerRegistration = db.collection("transactions").document(checkoutRequestId)
+        var listenerRegistration: ListenerRegistration? = null
+
+        val timeoutHandler = Handler(Looper.getMainLooper())
+        val timeoutRunnable = Runnable {
+            listenerRegistration?.remove()
+            if (!isAdded) return@Runnable  // <- guard added here too
+
+            loadingOverlay.visibility = View.GONE
+            buttonPay.isEnabled = true
+            Toast.makeText(requireContext(), "Payment timed out. Check your M-Pesa and try again.", Toast.LENGTH_LONG).show()
+        }
+        timeoutHandler.postDelayed(timeoutRunnable, 60000)
+
+        listenerRegistration = db.collection("transactions").document(checkoutRequestId)
             .addSnapshotListener { snapshot, e ->
-                if (e != null || snapshot == null || !snapshot.exists()) {
+                // Always guard first — this fires asynchronously and fragment may be gone
+                if (!isAdded) {
+                    listenerRegistration?.remove()
+                    timeoutHandler.removeCallbacks(timeoutRunnable)
                     return@addSnapshotListener
                 }
+
+                if (e != null || snapshot == null) return@addSnapshotListener
 
                 val status = snapshot.getString("status")
 
                 if (status == "SUCCESS") {
-                    // PAYMENT WENT THROUGH!
-                    val newTicketId = snapshot.getString("ticketId") ?: ""
+                    timeoutHandler.removeCallbacks(timeoutRunnable)
+                    listenerRegistration?.remove()
 
-                    // Build a ticket object to pass to the receipt screen
+                    val newTicketId = snapshot.getString("ticketId") ?: checkoutRequestId
+
                     val finalizedTicket = Ticket(
                         ticketId = newTicketId,
                         eventId = event.eventId,
                         userId = auth.currentUser?.uid ?: "",
-                        quantity = 1
+                        quantity = quantity,
+                        totalPaid = totalPaid
                     )
 
                     loadingOverlay.visibility = View.GONE
 
-                    // Navigate to Success Receipt
+                    parentFragmentManager.popBackStack(
+                        null,
+                        androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
+
                     val receiptFragment = TicketReceiptFragment()
-                    val bundle = Bundle().apply {
+                    receiptFragment.arguments = Bundle().apply {
                         putParcelable("SELECTED_EVENT", event)
                         putParcelable("PURCHASED_TICKET", finalizedTicket)
                     }
-                    receiptFragment.arguments = bundle
 
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout, receiptFragment) // Use your main container ID
-                        .commit() // Don't addToBackStack so they can't press back to "Pay" again
+                        .replace(R.id.frameLayout, receiptFragment)
+                        .commit()
 
                 } else if (status == "FAILED") {
-                    // User cancelled the PIN prompt or had insufficient funds
+                    timeoutHandler.removeCallbacks(timeoutRunnable)
+                    listenerRegistration?.remove()
                     loadingOverlay.visibility = View.GONE
-                    Toast.makeText(context, "Payment Failed or Cancelled.", Toast.LENGTH_LONG).show()
+                    buttonPay.isEnabled = true
+                    Toast.makeText(requireContext(), "Payment Failed or Cancelled.", Toast.LENGTH_LONG).show()
                 }
             }
+    }
 
-        // Optional: You could add a Handler to timeout and cancel the listener after 60 seconds
+    override fun onResume() {
+        super.onResume()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.GONE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().findViewById<View>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
     }
 }

@@ -77,6 +77,7 @@ class SearchLocationFragment : Fragment(R.layout.fragment_search_location) {
 
                     val request = FindAutocompletePredictionsRequest.builder()
                         .setQuery(query)
+                        .setCountries(listOf("KE"))
                         .build()
 
                     placesClient.findAutocompletePredictions(request)
@@ -176,9 +177,9 @@ class SearchLocationFragment : Fragment(R.layout.fragment_search_location) {
 
 
             if (item.isRecent) {
-                holder.iconImage.setImageResource(R.drawable.ic_home)
+                holder.iconImage.setImageResource(R.drawable.ic_recent)
             } else {
-                holder.iconImage.setImageResource(R.drawable.ic_home)
+                holder.iconImage.setImageResource(R.drawable.ic_search)
             }
 
             holder.itemView.setOnClickListener {
